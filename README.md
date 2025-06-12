@@ -20,16 +20,14 @@ A powerful C++ cybersecurity toolkit created by Xpl01t to help security enthusia
   Create reverse shells for secure remote access during penetration tests.
 
 ## 🚀 Installation
+```bash
+git clone https://github.com/yourusername/xploit_power.git
+cd Xploit_power
+chmod +x run.sh
+./run
 
 ### Requirements
 - A C++ compiler (GCC, Clang, or MSVC)
 - CMake (optional but recommended)
 - Linux/macOS/Windows
 
-### Build from source
-```bash
-git clone https://github.com/yourusername/xploit_power.git
-cd xploit_power
-mkdir build && cd build
-cmake ..
-make
