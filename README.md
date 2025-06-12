@@ -1,15 +1,35 @@
 # Xploit Power 🛠️
 
-A powerful C++ cybersecurity toolkit made by Xpl01t.
+A powerful C++ cybersecurity toolkit created by Xpl01t to help security enthusiasts and ethical hackers learn and test various cyber attack and defense techniques.
 
-## 🔧 Tools
+## 🔧 Tools Overview
 
-- **Dread** – Brute-force Tool 🔓
-- **Stry** – Port Scanner 🛡️
-- **Hexer** – Wordlist Generator 📜
-- **Aegis** – Cyber Defense Tool 🛡️
-- **Bony & Stony** – Reverse Shell Generator 📡
+- **Dread** – Brute-force Tool 🔓  
+  Perform password cracking with customizable wordlists and attack strategies.
 
-## 💡 Made with C++ and passion ☠️
+- **Stry** – Port Scanner 🛡️  
+  Quickly scan target IPs for open ports and services.
 
-## ⚠️ For educational use only!
+- **Hexer** – Wordlist Generator 📜  
+  Generate custom wordlists based on patterns and rules for brute-force attacks.
+
+- **Aegis** – Cyber Defense Tool 🛡️  
+  Detect and block suspicious network activities to protect systems.
+
+- **Bony & Stony** – Reverse Shell Generator 📡  
+  Create reverse shells for secure remote access during penetration tests.
+
+## 🚀 Installation
+
+### Requirements
+- A C++ compiler (GCC, Clang, or MSVC)
+- CMake (optional but recommended)
+- Linux/macOS/Windows
+
+### Build from source
+```bash
+git clone https://github.com/yourusername/xploit_power.git
+cd xploit_power
+mkdir build && cd build
+cmake ..
+make
