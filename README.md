@@ -25,7 +25,7 @@ git clone https://github.com/yourusername/xploit_power.git
 cd Xploit_power
 chmod +x run.sh
 ./run
-
+```
 ### Requirements
 - A C++ compiler (GCC, Clang, or MSVC)
 - CMake (optional but recommended)
