@@ -1,0 +1,13 @@
+run
+*.exe
+*.out
+*.o
+*.obj
+build/
+bin/
+*.log
+*.tmp
+*.swp
+.DS_Store
+.vscode/
+.idea/

@@ -26,8 +26,4 @@ cd Xploit_power
 chmod +x run.sh
 ./run
 ```
-### Requirements
-- A C++ compiler (GCC, Clang, or MSVC)
-- CMake (optional but recommended)
-- Linux/macOS/Windows
 
