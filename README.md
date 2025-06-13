@@ -19,7 +19,7 @@ A powerful C++ cybersecurity toolkit created by Xpl01t to help security enthusia
 - **Bony & Stony** – Reverse Shell Generator 📡  
   Create reverse shells for secure remote access during penetration tests.
 
-## 🚀 Installation
+## 🚀 Installation - FOR LINUX
 ```bash
 git clone https://github.com/Dalma7/xploit_power.git
 cd Xploit_power
