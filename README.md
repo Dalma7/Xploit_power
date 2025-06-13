@@ -21,7 +21,7 @@ A powerful C++ cybersecurity toolkit created by Xpl01t to help security enthusia
 
 ## 🚀 Installation
 ```bash
-git clone https://github.com/yourusername/xploit_power.git
+git clone https://github.com/Dalma7/xploit_power.git
 cd Xploit_power
 chmod +x run.sh
 ./run
