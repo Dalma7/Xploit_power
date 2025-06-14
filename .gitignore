@@ -1,4 +1,12 @@
 run
+xploit
+main.o
+aegis/aegis.o
+Bony_Stony/bony_stony.o
+dread/dread.o
+hexer/hexer.o
+stry/stry.o
+.gitignore
 *.exe
 *.out
 *.o

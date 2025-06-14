@@ -28,13 +28,15 @@ void Hexer::banner(){
 void Hexer::CLI(){
     Wordlists_generator gen;
     Passwords_generator pas;
+    Numbers_generator num;
     int choice;
     sleep(1);
 
     cout << "[1]. Wordlists generator." << endl;
     cout << "[2]. Passwords generator." << endl;
+    cout << "[3]. Numbers generator." << endl;
     cout << "[99]. Exit." << endl;
-    cout << "[?]. Enter your choice: ";
+    cout << "[?]. Enter your choice >> ";
     cin >> choice;
 
     switch (choice){
@@ -43,6 +45,9 @@ void Hexer::CLI(){
             break;
         case 2 : 
             pas.Pass_run();
+            break;
+        case 3:
+            num.Nums_run();
             break;
         case 99:
             cout << "Exiting..";
@@ -66,7 +71,6 @@ void Hexer::Wordlists_generator::takeWords(){
         words.push_back(token);
     }
 }
-
 void Hexer::Wordlists_generator::combinations(const vector<string>& words){
     combos.clear();
     for(size_t i=0; i < words.size(); i++){
@@ -77,7 +81,6 @@ void Hexer::Wordlists_generator::combinations(const vector<string>& words){
         }
     }
 }
-
 void Hexer::Wordlists_generator::saveWordlist(){
     string fileName;
 
@@ -101,7 +104,6 @@ void Hexer::Wordlists_generator::saveWordlist(){
     sleep(1);
     cout << "\033[35m[+]Wordlist has been saved successfully in secrete file\033[0m" << endl;
 }
-
 void Hexer::Wordlists_generator::Wordlists_runner(){
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     takeWords();
@@ -143,6 +145,59 @@ void Hexer::Passwords_generator::Pass_run(){
     makePasswords();
     savePassword();
 }
+
+bool Hexer::Numbers_generator::takeInput(){
+    cout << "[?] Enter the length of the numbers (1-10): ";
+    cin >> length;
+
+    if(length < 0 || length > 10 || cin.fail()){
+        cerr << "[-]Invalid number." << endl;
+        cin.clear();
+        cin.ignore(10000, '\n');
+        return false;
+    }
+    return true;
+}
+void Hexer::Numbers_generator::create_numbers(){
+    numbers.clear();
+    int max = 1;
+    for(int i = 0; i < length ; i++) max *= 10;
+
+    for(int i = 0; i < max; i++){
+        string num = to_string(i);
+        int padding = length - num.length();
+        if (padding < 0) padding = 0;
+        num = string(padding , '0') + num;
+        numbers.push_back(num);
+    }
+    cout << "[+] Numbers generated successefully!";
+}
+void Hexer::Numbers_generator::Save_Numbers(){
+    string filename;
+    cout << "[?] Enter the name of the file (no extention): ";
+    cin >> filename;
+
+    string path = "/home/malloc/Documents/infos/wordlists/" + filename + ".txt";
+
+    ofstream file(path);
+    if(!file.is_open()){
+        cerr << "[-] Cant open file.";
+        return;
+    }
+    for( auto& num : numbers){
+        file << num << endl;
+    }
+    file.close();
+    cout << "[+] The wordlist has been saved successfully!";
+}
+
+void Hexer::Numbers_generator::Nums_run(){
+    takeInput();
+    create_numbers();
+    Save_Numbers();
+}
+
+
 void Hexer::mainRun(){
     banner();
     CLI();

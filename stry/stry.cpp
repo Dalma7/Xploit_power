@@ -11,7 +11,7 @@
 #include <unistd.h>
 using namespace std;
 using Lock = lock_guard<mutex>;
-mutex mtx; 
+extern mutex mtx; 
 
 Stry::Stry() {
     ports = {20, 21, 22, 23, 25, 53, 67, 69, 80, 110, 119, 

@@ -6,9 +6,10 @@
 #include <curl/curl.h>
 #include <thread>
 #include <mutex>
+using namespace std;
 using Lock = lock_guard<mutex>;
 mutex mtx; 
-using namespace std;
+
 
 atomic<bool> found = false;
 

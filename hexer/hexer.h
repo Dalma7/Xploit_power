@@ -28,6 +28,16 @@ class Hexer{
             void savePassword();
             void Pass_run();
     };
+    class Numbers_generator {
+        private:
+            int length;
+            std::vector<std::string> numbers;
+        public:
+            bool takeInput();    
+            void create_numbers();
+            void Save_Numbers();
+            void Nums_run();
+    };
     void mainRun();
 };
 #endif

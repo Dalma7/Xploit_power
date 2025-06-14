@@ -30,7 +30,7 @@ void Bony_Stony::Bony::listener(){
     cout << "[*Bony]Start listening..." << endl;
 }
 
-void connect_os(){
+void Bony_Stony::Bony::connect_os(){
     int sock = socket( AF_INET, SOCK_STREAM, 0);
     if (sock == -1){
         cerr << "[-]Failed to create a socket." << endl;

@@ -51,7 +51,7 @@ int main(){
         cout << "[?]Enter your choice(1-99): ";
         
         cin >> choice;
-        sleep(1);
+        usleep(4000);
         switch (choice)
         {
             case 1:
