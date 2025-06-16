@@ -11,6 +11,7 @@ class Dread {
         std::vector<std::string> passwords;
         std::string targetURL;
         std::atomic<bool> found ;
+        std::atomic<int> attemptCount;
     public:
         void banner();
         void loadWordlists();

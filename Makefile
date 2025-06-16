@@ -20,7 +20,8 @@ all: $(TARGET)
 	@echo -e "$(GREEN)[+] Build complete!$(NC)"
 
 $(TARGET): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+	$(CXX) $(CXXFLAGS) -o $@ $^ -lcurl
+
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@

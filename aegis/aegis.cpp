@@ -2,20 +2,43 @@
 #include <iostream>
 #include <vector>
 #include <unistd.h>
+#include <cstdio>
 #include <fstream>
 using namespace std;
 
+
 Aegis::Aegis(){
-        blackListsIp = {
-            "192.168.1.100",
-            "10.0.0.5",
-            "123.456.78.9"
-        };
-        
+    commands = {"whoami", 
+                "sudo ss -tuln",    
+                "sudo ufw status", 
+                "cat /etc/os-release"
+    };
 }
-        void Aegis::banner(){
-            cout << "\033[96m";
-            cout << R"( 
+
+void Aegis::CLI(){
+    int choice;
+    Aegis::banner();
+
+    cout << "[1] General checkout for the security." << endl;
+    cout << "[99] Exit." << endl;
+    cout << ">>";
+    cin >> choice;
+    
+    switch(choice){
+        case 1:
+            run();
+            break;
+        case 99:
+            cout << "Exiting.." << endl;
+            break;
+        default:
+            cerr << "[-]Invalid number." << endl;
+    }
+}
+
+void Aegis::banner(){
+    cout << "\033[96m";
+    cout << R"( 
 ######################################
 # █████╗ ███████╗ ██████╗ ██╗███████╗#
 #██╔══██╗██╔════╝██╔════╝ ██║██╔════╝#
@@ -24,50 +47,68 @@ Aegis::Aegis(){
 #██║  ██║███████╗╚██████╔╝██║███████║#
 #╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝╚══════╝#
 #                                    #
-#            Aegis v1.0              #
+#            Aegis v1.1              #
 # By Xpl01t | www.XploitPower.com    #
 ######################################
 )";
-            cout << "\033[0m";
-        }
+    cout << "\033[0m";
+}
 
-        void Aegis::takeIp(){
-            cout << "[?]Enter the Ip address: ";
-            cin >> ip;
-            sleep(1);
-        }
+string Aegis::exec(string& command){
+    FILE* fp = popen(command.c_str() , "r"); //open for reading
+    //c_str() to convert string to const char*
+    if( fp == nullptr){
+        cerr << "[-]popen failed." << endl;
+        return "Unknown";
+    }
 
-        bool Aegis::isBlackListed(const string& ip){
-            for(const auto& blockedIp : blackListsIp){
-                if (blockedIp == ip){
-                    return true;
-                }
-            }
-            return false;
-        }
-        void Aegis::saveBlockedIp(const string& ip){
-            ofstream log("/home/malloc/Documents/infos/aegis_logs.txt", ios::app);
-            if (!log) {
-                std::cerr << "[ERROR] Could not open the secret file!" << std::endl;
-            }
-            log << "[AEGIS] ▶ [BLOCKED] " << ip << endl;
-            log.flush();
-            cout << "[*]The ip has been saved in a secrete file" << endl;
-            
-        }
+    char buffer[1024];
+    string result ;
 
-        void Aegis::checkConnection(const string& ip){
-            if(isBlackListed(ip)){
-                cout << "\033[31m[-]Connection from " << ip << " is blocked!\033[0m" << endl;
-                saveBlockedIp(ip);
-            }
-            else{
-                cout << "\033[32m[+]Connection from " << ip << " is allowed!\033[0m" << endl;
-            }
-        }
+    if(fgets(buffer, sizeof(buffer), fp) != nullptr){
+        result += buffer;
+    }
+    else{
+        command = "Unknown";
+    }
+    pclose(fp);
 
-        void Aegis::run(){
-            banner();
-            takeIp();
-            checkConnection(ip);
-        }
+    if( !result.empty() && result.back() == '\n'){
+        result.pop_back();
+    }
+
+    return result;
+}
+
+void Aegis::runCommand(){
+    results.clear();
+
+    for (auto& cmd : commands){
+        string output = exec(cmd);
+        results.push_back(output);
+    }
+
+}
+/*void Aegis::saveOutput() {
+
+}*/
+
+void Aegis::showOutput() {
+    cout << "\033[1;96m";
+    cout << "======================" << endl;
+    cout << "   System checkup     " << endl;
+    cout << "======================" << "\033[0m" << endl;
+    for(int i = 0; i < results.size() ; i++) {
+        cout << "[" << commands[i] <<"]" << endl;
+        cout << results[i] << endl;
+        cout << "------------------------------------" << endl;
+    }
+    
+    //cout << "You are :" << whoami << endl;
+}
+
+void Aegis::run() {   
+    runCommand();
+    showOutput();
+}
+

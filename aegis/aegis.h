@@ -3,19 +3,29 @@
 
 #include <iostream>
 #include <vector>
+using namespace std;
 
+//step 1 : make the CLI
+//step 2 : run the command as the choice
+// sudo ss -tuln
+// sudo ufw status
+// cat /etc/os-release
+//step 3 : save and show the output
+//step 4 : end
 
 class Aegis {
-    private:
-        std::vector<std::string> blackListsIp;
-        std::string ip;
+    private: 
+        
+        vector <string> commands;
+        vector <string> results;
     public:
         Aegis();
         void banner();
-        void takeIp();
-        bool isBlackListed(const std::string& ip);
-        void saveBlockedIp(const std::string& ip);
-        void checkConnection(const std::string& ip);
+        void CLI();
+        string exec(string& command);
+        void runCommand();
+        void saveOutput();
+        void showOutput();
         void run();
 };
 

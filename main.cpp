@@ -7,8 +7,6 @@
 #include "aegis/aegis.h"
 using namespace std;
 
-
-
 void displaybanner(){
     cout << "\033[1;31m";
     cout << R"(
@@ -28,8 +26,7 @@ void displaybanner(){
     cout << "\033[0m";
 
 }
-int main(){
- 
+int main(){ 
     bool run = true;
     Dread dread;
     Aegis aegis;
@@ -71,7 +68,7 @@ int main(){
                 break;
             case 4:
                 system("clear");
-                aegis.run();
+                aegis.CLI();
                 toolrun = true;
                 break;
             case 5:
@@ -88,7 +85,6 @@ int main(){
                 cerr << "\033[31mInvalid number\033[0m" << endl;
                 break;  
         }
-
         sleep(1);
         if(toolrun){
             string again;
@@ -103,5 +99,4 @@ int main(){
             
         }
     }
-
 }
